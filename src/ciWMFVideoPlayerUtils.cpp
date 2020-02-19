@@ -19,6 +19,11 @@
 #pragma comment(lib, "Shlwapi.lib")
 #pragma comment(lib, "Propsys.lib")
 
+// These three libs are required if you want to 'hot-load' some code that uses Cinder-WMFVideo
+#pragma comment(lib, "User32.lib") 
+#pragma comment(lib, "Ole32.lib") 
+#pragma comment(lib, "Gdi32.lib") 
+
 #include "presenter/Presenter.h"
 #include "atlcomcli.h"
 
