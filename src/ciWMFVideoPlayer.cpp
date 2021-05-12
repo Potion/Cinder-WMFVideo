@@ -35,6 +35,21 @@ ciWMFVideoPlayer::ScopedVideoTextureBind::~ScopedVideoTextureBind()
 	mPlayer->mEVRPresenter->unlockSharedTexture();
 }
 
+
+void ciWMFVideoPlayer::bind(uint8_t texture_unit)
+{
+	mPlayer->mEVRPresenter->lockSharedTexture();
+	mTex->bind(texture_unit);
+	mIsSharedTextureLocked = true;
+}
+
+void ciWMFVideoPlayer::unbind()
+{
+	mIsSharedTextureLocked = false;
+	mTex->unbind();
+	mPlayer->mEVRPresenter->unlockSharedTexture();
+}
+
 ciWMFVideoPlayer* findPlayers( HWND hwnd )
 {
 	for each( PlayerItem e in g_WMFVideoPlayers ) {
@@ -231,7 +246,7 @@ void ciWMFVideoPlayer::update()
 {
 	if( !mPlayer ) { return; }
 
-	if( ( mWaitForLoadedToPlay ) && mPlayer->GetState() == PAUSED ) {
+	if ( mWaitForLoadedToPlay && mPlayer->GetState() == PAUSED) {
 		mWaitForLoadedToPlay = false;
 		mPlayer->Play();
 	}
@@ -259,6 +274,7 @@ void ciWMFVideoPlayer::stop()
 
 void ciWMFVideoPlayer::pause()
 {
+	if (mPlayer->GetState() == OPEN_PENDING) { mWaitForLoadedToPlay = false; }
 	mPlayer->Pause();
 }
 
@@ -337,14 +353,14 @@ bool ciWMFVideoPlayer::setSpeed( float speed, bool useThinning )
 	}
 	else {
 		//setting to a negative doesn't seem to work though no error is thrown...
-		/*float position = getPosition();
+		float position = getPosition();
 		if(isPlaying())
 		mPlayer->Stop();
 		hr = mPlayer->SetPlaybackRate(useThinning, speed);
 		if(resume){
-		mPlayer->Play();
-		mPlayer->setPosition(position);
-		}*/
+			mPlayer->setPosition(position);
+			mPlayer->Play();
+		}
 	}
 
 	if( hr == S_OK ) {
@@ -493,4 +509,3 @@ BOOL ciWMFVideoPlayer::InitInstance()
 
 	return TRUE;
 }
-

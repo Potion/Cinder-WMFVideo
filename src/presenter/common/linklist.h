@@ -35,8 +35,6 @@
 
 namespace MediaFoundationSamples
 {
-
-
     template <class T>
     struct NoOp
     {
@@ -48,7 +46,7 @@ namespace MediaFoundationSamples
     template <class T>
     class List
     {
-    protected:
+    public:
 
         // Nodes in the linked list
         struct Node
@@ -92,7 +90,7 @@ namespace MediaFoundationSamples
             }
 
         private:
-            const Node *pNode;
+            typename List<T>::Node* pNode;
 
             POSITION(Node *p) : pNode(p) 
             {
@@ -424,6 +422,7 @@ namespace MediaFoundationSamples
     public:
 
         typedef T* Ptr;
+        using Node = typename List<T *>::Node;
 
         void Clear()
         {
@@ -436,7 +435,7 @@ namespace MediaFoundationSamples
         }
 
     protected:
-        HRESULT InsertAfter(Ptr item, Node *pBefore)
+        HRESULT InsertAfter(Ptr item, typename const List<T*>::Node *pBefore)
         {
             // Do not allow NULL item pointers unless NULLABLE is true.
             if (!item && !NULLABLE)
@@ -457,7 +456,7 @@ namespace MediaFoundationSamples
             return hr;
         }
 
-        HRESULT GetItem(const Node *pNode, Ptr* ppItem)
+        HRESULT GetItem(typename const List<T*>::Node *pNode, Ptr* ppItem)
         {
             Ptr pItem = NULL;
 
@@ -476,7 +475,7 @@ namespace MediaFoundationSamples
             return hr;
         }
 
-        HRESULT RemoveItem(Node *pNode, Ptr *ppItem)
+        HRESULT RemoveItem(typename const List<T*>::Node *pNode, Ptr *ppItem)
         {
             // ppItem can be NULL, but we need to get the
             // item so that we can release it. 
